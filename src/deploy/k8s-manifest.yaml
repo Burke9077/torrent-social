@@ -48,8 +48,8 @@ spec:
                 key: DB_NAME
         resources:
           requests:
-            cpu: "2"
-            memory: 2Gi
+            cpu: "1"
+            memory: 1Gi
   strategy:
     type: RollingUpdate
     rollingUpdate:
