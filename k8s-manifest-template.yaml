@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: torrent-social
-        image: local/torrent-social-app:latest
+        image: {{TORRENT_SOCIAL_APP_IMAGE}}
         imagePullPolicy: Never
         ports:
         - containerPort: 3000
@@ -36,20 +36,3 @@ spec:
       port: 80
       targetPort: 3000
   type: LoadBalancer
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: torrent-social-ingress
-spec:
-  rules:
-  - host: "torrent-social.local"
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: torrent-social-service
-            port:
-              number: 80
