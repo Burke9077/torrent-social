@@ -1,0 +1,62 @@
+# Database configuration for testing and local development.
+# First start with the secret values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: torrent-social-mysql-credentials
+type: Opaque
+stringData:
+  DB_HOST: "${DB_HOST}"
+  DB_USER: "${DB_USER}"
+  DB_PASS: "${DB_PASS}"
+  DB_NAME: "${DB_NAME}"
+  DB_ROOT_PW: "${DB_ROOT_PW}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${DB_HOST}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${DB_HOST}
+  template:
+    metadata:
+      labels:
+        app: ${DB_HOST}
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_ROOT_PW
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_USER
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_PASS
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_NAME
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: torrent-social-mysql-pvc

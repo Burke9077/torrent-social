@@ -36,3 +36,6 @@ spec:
       port: 80
       targetPort: 3000
   type: LoadBalancer
+---
+# DB service for local development and testing only
+#${MYSQL_DB_K8S_MANIFEST}
