@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: torrent-social
-        image: {{TORRENT_SOCIAL_APP_IMAGE}}
+        image: ${TORRENT_SOCIAL_APP_IMAGE}
         imagePullPolicy: Never
         ports:
         - containerPort: 3000
