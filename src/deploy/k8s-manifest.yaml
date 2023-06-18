@@ -24,6 +24,8 @@ spec:
         ports:
         - containerPort: 3000
         env:
+          - name: WORKER_THREADS
+            value: "4"
           - name: DB_HOST
             valueFrom:
               secretKeyRef:
