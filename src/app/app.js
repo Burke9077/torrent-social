@@ -63,7 +63,7 @@ if (cluster.isMaster) {
   // Sample endpoint
   app.get('/', (req, res) => {
     // Use the shared MySQL connection for database operations
-    sharedConnection.query('SELECT * FROM your_table', (err, results) => {
+    sharedConnection.query('SELECT VERSION();', (err, results) => {
       if (err) {
         console.error('Error executing MySQL query', err);
         res.status(500).json({ error: 'Internal Server Error' });
