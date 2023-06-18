@@ -13,6 +13,24 @@ stringData:
   DB_NAME: "${DB_NAME}"
   DB_ROOT_PW: "${DB_ROOT_PW}"
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  my.cnf: |
+    [client]
+    default-character-set=utf8mb4
+
+    [mysql]
+    default-character-set=utf8mb4
+
+    [mysqld]
+    bind-address = 0.0.0.0
+    collation-server = utf8mb4_unicode_520_ci
+    init-connect='SET NAMES utf8mb4'
+    character-set-server = utf8mb4
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,6 +45,12 @@ spec:
       labels:
         app: ${DB_HOST}
     spec:
+      volumes:
+        - name: mysql-storage
+          emptyDir: {}
+        - name: mysql-config-volume
+          configMap:
+            name: mysql-config
       containers:
       - name: mysql
         image: mysql:5.7
@@ -54,9 +78,20 @@ spec:
         ports:
         - containerPort: 3306
         volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql-storage
-        persistentVolumeClaim:
-          claimName: torrent-social-mysql-pvc
+          - name: mysql-storage
+            mountPath: /var/lib/mysql
+          - name: mysql-config-volume
+            mountPath: /etc/mysql/conf.d
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${DB_HOST}
+spec:
+  selector:
+    app: ${DB_HOST}
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: NodePort

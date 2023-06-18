@@ -23,6 +23,27 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 3000
+        env:
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_HOST
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_USER
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_PASS
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: torrent-social-mysql-credentials
+                key: DB_NAME
 ---
 apiVersion: v1
 kind: Service
