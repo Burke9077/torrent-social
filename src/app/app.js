@@ -24,11 +24,18 @@ const connection = mysql.createConnection({
 
 // Connect to MySQL
 connection.connect((err) => {
+  // Log any errors to the console
   if (err) {
     console.error('Error connecting to the database', err);
     return;
   }
   console.log('Connected to the MySQL server');
+
+  // If the error is fatal, exit the process
+  if (err && typeof err === 'object' && err.hasOwnProperty('fatal') && err.fatal === true) {
+    console.error('Fatal error occurred, exiting process');
+    process.exit(1);
+  }
 });
 
 // Sample endpoint

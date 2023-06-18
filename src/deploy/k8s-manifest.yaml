@@ -44,6 +44,15 @@ spec:
               secretKeyRef:
                 name: torrent-social-mysql-credentials
                 key: DB_NAME
+        resources:
+          requests:
+            cpu: "2"
+            memory: 2Gi
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
 ---
 apiVersion: v1
 kind: Service
