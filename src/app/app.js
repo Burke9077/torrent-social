@@ -36,23 +36,20 @@ if (cluster.isMaster) {
   app.use(cors());
   app.use(bodyParser.json());
 
-  // Create a shared MySQL connection
-  const sharedConnection = mysql.createConnection({
+  // Create a shared MySQL connection pool
+  const sharedPool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 20,
+    queueLimit: 0
   });
 
-  // Connect to MySQL
-  sharedConnection.connect((err) => {
-    // Log any errors to the console
-    if (err) {
-      console.error('Error connecting to the database', err);
-      return;
-    }
-    console.log('Connected to the MySQL server');
-
+  // Listen for pool errors
+  sharedPool.on('error', (err) => {
+    console.error('Unexpected error in MySQL connection pool', err);
     // If the error is fatal, exit the process
     if (err && typeof err === 'object' && err.hasOwnProperty('fatal') && err.fatal === true) {
       console.error('Fatal error occurred, exiting process');
@@ -62,8 +59,8 @@ if (cluster.isMaster) {
 
   // Sample endpoint
   app.get('/', (req, res) => {
-    // Use the shared MySQL connection for database operations
-    sharedConnection.query('SELECT VERSION();', (err, results) => {
+    // Use the shared MySQL pool for database operations
+    sharedPool.query('SELECT VERSION();', (err, results) => {
       if (err) {
         console.error('Error executing MySQL query', err);
         res.status(500).json({ error: 'Internal Server Error' });
