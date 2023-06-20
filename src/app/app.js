@@ -57,6 +57,9 @@ if (cluster.isMaster) {
     }
   });
 
+  // Route /api traffic to the index.js file
+  app.use('/api', require('./api/index'));
+
   // Sample endpoint
   app.get('/', (req, res) => {
     // Use the shared MySQL pool for database operations
@@ -69,7 +72,7 @@ if (cluster.isMaster) {
       res.send('Hello, Welcome to our social media site!');
     });
   });
-
+  
   // Serve the application at the given port
   app.listen(port, () => {
     console.log(`Worker ${process.pid} is running and listening on port ${port}`);

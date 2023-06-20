@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./openapi.yaml');
+const path = require('path');
+const swaggerDocument = YAML.load(path.join(__dirname, './openapi.yaml'));
 
 // Define your API routes here
 
